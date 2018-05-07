@@ -22,7 +22,7 @@ function wsrep_var() {
   if [[ $var_name =~ ^wsrep_[a-z_]+$ ]]; then
     timeout 5 \
       mysql --defaults-file=/var/vcap/jobs/mysql/config/mylogin.cnf -h "$host" -P "$MYSQL_PORT" \
-        --execute="SHOW STATUS LIKE '$var_name'" |\
+        --execute="SHOW STATUS LIKE '$var_name'" -N |\
       awk '{print $2}'
   fi
 }
