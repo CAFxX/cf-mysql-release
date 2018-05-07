@@ -7,7 +7,12 @@
     cluster_ips += link('arbitrator').instances.map(&:address)
   end
 %>
+<% if p('cf_mysql.mysql.remote_admin_access') %>
 CLUSTER_NODES=(<%= cluster_ips.map{|e| Shellwords.escape e}.join(' ') %>)
+<% else %>
+# FIXME: check all nodes even if remote_admin_access is disabled
+CLUSTER_NODES=(127.0.0.1)
+<% end %>
 MYSQL_PORT=<%= Shellwords.escape p("cf_mysql.mysql.port") %>
 
 # if the node ain't running, ain't got nothin' to drain
