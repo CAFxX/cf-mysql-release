@@ -5,7 +5,7 @@ templates:
   disable_mysql_cli_history.sh.erb: config/disable_mysql_cli_history.sh
   drain.sh: bin/drain
   drain-user.sql.erb: config/drain-user.sql
-  drain.cnf: config/drain.cnf
+  drain.cnf.erb: config/drain.cnf
   mariadb_ctl.erb: bin/mariadb_ctl
   my.cnf.erb: config/my.cnf
   mylogin.cnf.erb: config/mylogin.cnf
