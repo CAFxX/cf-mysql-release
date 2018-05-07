@@ -7,12 +7,7 @@
     cluster_ips += link('arbitrator').instances.map(&:address)
   end
 %>
-<% if p('cf_mysql.mysql.remote_admin_access') %>
 CLUSTER_NODES=(<%= cluster_ips.map{|e| Shellwords.escape e}.join(' ') %>)
-<% else %>
-# FIXME: check all nodes even if remote_admin_access is disabled
-CLUSTER_NODES=(127.0.0.1)
-<% end %>
 MYSQL_PORT=<%= Shellwords.escape p("cf_mysql.mysql.port") %>
 
 # if the node ain't running, ain't got nothin' to drain
@@ -26,7 +21,7 @@ function wsrep_var() {
   local host=${2:-127.0.0.1}
   if [[ $var_name =~ ^wsrep_[a-z_]+$ ]]; then
     timeout 5 \
-      mysql --defaults-file=/var/vcap/jobs/mysql/config/mylogin.cnf -h "$host" -P "$MYSQL_PORT" \
+      mysql --defaults-file=/var/vcap/jobs/mysql/config/drain.cnf -h "$host" -P "$MYSQL_PORT" \
         --execute="SHOW STATUS LIKE '$var_name'" -N |\
       awk '{print $2}'
   fi
