@@ -51,7 +51,7 @@ if [[ $local_state_comment != "Synced" ]]; then
   echo -5; exit 0 # retry in 5 seconds
 fi
 
-/var/vcap/packages/mariadb/support-files/mysql.server stop --pid-file=/var/vcap/sys/run/mysql/mysql.pid > /dev/null
+/var/vcap/packages/mariadb/support-files/mysql.server stop --pid-file=/var/vcap/sys/run/mysql/mysql.pid 1>&2
 return_code=$?
 if [[ $return_code != 0 ]]; then
   echo "mysql.server stop returned $return_code: drain failed" 1>&2
