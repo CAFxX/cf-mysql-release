@@ -1,0 +1,10 @@
+<%
+  hosts = %w{localhost 127.0.0.1 ::1}
+  hosts << link('mysql').instances.map(&:address)
+  if_link('arbitrator') do
+    hosts << link('arbitrator').instances.map(&:address)
+  end
+%>
+<% hosts.each do |host| %>
+GRANT USAGE ON mysql.* TO 'drain'@'<%= host %>' IDENTIFIED BY '<%= p('cf_mysql.mysql.drain.db_password') %>'
+<% end %>
