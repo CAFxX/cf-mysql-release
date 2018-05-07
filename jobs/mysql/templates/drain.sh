@@ -7,9 +7,9 @@
     cluster_ips += link('arbitrator').instances.map(&:address)
   end
 %>
-EXPECTED_CLUSTER_SIZE=<%= cluster_ips.count %>
+EXPECTED_CLUSTER_SIZE=<%= Shellwords.escape cluster_ips.count %>
 CLUSTER_NODES=(<%= cluster_ips.map{|e| Shellwords.escape e}.join(' ') %>)
-MYSQL_PORT='<%= p("cf_mysql.mysql.port") %>'
+MYSQL_PORT=<%= Shellwords.escape p("cf_mysql.mysql.port") %>
 
 # if the node is not running, ain't got nothin' to drain
 if ! ps -p $(</var/vcap/sys/run/mysql/mysql.pid) >/dev/null then
