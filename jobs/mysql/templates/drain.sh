@@ -31,7 +31,7 @@ function wsrep_var() {
 # something is terribly wrong (loss of quorum or split-brain) and doing a
 # rolling restart can actually cause data loss (e.g. if a node that is out
 # of sync is used to bootstrap the cluster): in this case we fail immediately.
-for NODE in ${CLUSTER_NODES[@]}; do
+for NODE in "${CLUSTER_NODES[@]}"; do
   cluster_status=$(wsrep_var wsrep_cluster_status "$NODE")
   if [ "$cluster_status" != "Primary" ]; then
     echo "wsrep_cluster_status of node '$NODE' is '$cluster_status' (expected 'Primary'): drain failed" 1>&2
@@ -44,7 +44,7 @@ done
 # Consider a 3 node cluster: if node1 is donor for node2 and we shut down node3 
 # -that is synced- then node1 is joining, node2 is donor and node3 is down: as
 # a result the cluster lose quorum until node1/node2 complete the transfer!)
-for NODE in ${CLUSTER_NODES[@]}; do
+for NODE in "${CLUSTER_NODES[@]}"; do
   state=$(wsrep_var wsrep_local_state_comment "$NODE")
   if [ "$state" != "Synced" ]; then
     echo "wsrep_local_state_comment of node '$NODE' is '$state' (expected 'Synced'): retry drain in 5 seconds" 1>&2
