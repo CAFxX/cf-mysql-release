@@ -4,6 +4,8 @@ name: mysql
 templates:
   disable_mysql_cli_history.sh.erb: config/disable_mysql_cli_history.sh
   drain.sh: bin/drain
+  drain-user.sql.erb: config/drain-user.sql
+  drain.cnf: config/drain.cnf
   mariadb_ctl.erb: bin/mariadb_ctl
   my.cnf.erb: config/my.cnf
   mylogin.cnf.erb: config/mylogin.cnf
@@ -205,6 +207,9 @@ properties:
   cf_mysql.mysql.galera_healthcheck.db_password:
     description: 'Password used by the sidecar to connect to the database'
 
+  cf_mysql.mysql.drain.db_password:
+    description: 'Password used by the drain script to connect to the database'
+    
   cf_mysql.mysql.disable_auto_sst:
     description: 'When disable_auto_sst is true, nodes unable to IST will be prevented from automatically deleting their data and performing an SST'
     default: false
