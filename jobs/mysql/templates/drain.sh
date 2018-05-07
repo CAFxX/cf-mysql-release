@@ -28,23 +28,17 @@ function wsrep_var() {
   fi
 }
 
-# check if this node is part of the PRIMARY component; if it's not then 
+# check if all nodes are part of the PRIMARY component; if not then 
 # something is terribly wrong (loss of quorum or split-brain) and doing a
 # rolling restart can actually cause data loss (e.g. if a node that is out
 # of sync is used to bootstrap the cluster): in this case we fail immediately.
-cluster_status=$(wsrep_var wsrep_cluster_status)
-if [ "$cluster_status" != "Primary" ]; then
-  echo "wsrep_cluster_status is '$cluster_status' (expected 'Primary'): drain failed" 1>&2
-  exit -1 # drain failed
-fi
-
-# this node is part of the PRIMARY component; let's check if all the nodes are
-# online; if they are not we wait and retry
-cluster_size=$(wsrep_var wsrep_cluster_size)
-if [ "$cluster_size" -lt "$EXPECTED_CLUSTER_SIZE" ]; then
-  echo "wsrep_cluster_size is '$cluster_size' (expected '$expected_cluster_size'): retry drain in 5 seconds" 1>&2
-  echo -5; exit 0 # retry in 5 seconds
-fi
+for NODE in ${CLUSTER_NODES[@]}; do
+  cluster_status=$(wsrep_var wsrep_cluster_status "$NODE")
+  if [ "$cluster_status" != "Primary" ]; then
+    echo "wsrep_cluster_status of node '$NODE' is '$cluster_status' (expected 'Primary'): drain failed" 1>&2
+    exit -1 # drain failed
+  fi
+done
 
 # Check if all nodes are synced: if not we wait and retry
 # This check must be done against *ALL* nodes, not just against the local node.
