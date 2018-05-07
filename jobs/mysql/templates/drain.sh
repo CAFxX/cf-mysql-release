@@ -59,12 +59,4 @@ for NODE in ${CLUSTER_NODES[@]}; do
   fi
 done
 
-/var/vcap/packages/mariadb/support-files/mysql.server stop --pid-file=/var/vcap/sys/run/mysql/mysql.pid 1>&2
-return_code=$?
-if [ $return_code -ne 0 ]; then
-  echo "mysql.server stop returned $return_code: drain failed" 1>&2
-  exit ${return_code} # drain failed
-fi
-
-echo "mysql.server stop returned 0: drain OK" 1>&2
 echo 0; exit 0 # drain success
