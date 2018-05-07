@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -eu
 <%
   require "shellwords"
 
@@ -7,7 +7,6 @@
     cluster_ips += link('arbitrator').instances.map(&:address)
   end
 %>
-EXPECTED_CLUSTER_SIZE=<%= Shellwords.escape cluster_ips.count %>
 CLUSTER_NODES=(<%= cluster_ips.map{|e| Shellwords.escape e}.join(' ') %>)
 MYSQL_PORT=<%= Shellwords.escape p("cf_mysql.mysql.port") %>
 
@@ -18,7 +17,7 @@ if ! ps -p $(</var/vcap/sys/run/mysql/mysql.pid) >/dev/null then
 fi
 
 function wsrep_var() {
-  local var_name=$1
+  local var_name="$1"
   local host=${2:-localhost}
   if [[ $var_name =~ ^wsrep_[a-z_]+$ ]]; then
     timeout 5 \
@@ -49,6 +48,7 @@ for NODE in ${CLUSTER_NODES[@]}; do
   state=$(wsrep_var wsrep_local_state_comment "$NODE")
   if [ "$state" != "Synced" ]; then
     echo "wsrep_local_state_comment of node '$NODE' is '$state' (expected 'Synced'): retry drain in 5 seconds" 1>&2
+    # TODO: rewrite to avoid using dynamic drain (deprecated)
     echo -5; exit 0 # retry in 5 seconds
   fi
 done
