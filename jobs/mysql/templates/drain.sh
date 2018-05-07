@@ -23,7 +23,7 @@ fi
 
 function wsrep_var() {
   local var_name="$1"
-  local host=${2:-localhost}
+  local host=${2:-127.0.0.1}
   if [[ $var_name =~ ^wsrep_[a-z_]+$ ]]; then
     timeout 5 \
       mysql --defaults-file=/var/vcap/jobs/mysql/config/mylogin.cnf -h "$host" -P "$MYSQL_PORT" \
